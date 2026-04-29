@@ -48,3 +48,35 @@ To enable Google AdSense at deploy time, inject your publisher ID before `app.js
 ```
 
 If no client ID is provided, the app keeps placeholder ad boxes without loading ad scripts.
+
+## Deploy to Vercel
+
+### Option A: Vercel Dashboard (no CLI required)
+
+1. Push this repo to GitHub/GitLab/Bitbucket.
+2. In Vercel, click **Add New Project** and import the repository.
+3. Keep defaults (no framework preset required).
+4. Deploy.
+
+### Option B: Vercel CLI
+
+```bash
+npm i -g vercel
+vercel
+vercel --prod
+```
+
+### Project config included
+
+- `vercel.json` is included with:
+  - clean URLs enabled,
+  - basic security headers,
+  - cache headers for `app.js` and `styles.css`.
+
+After deployment, configure your ad publisher ID in your hosted HTML (or inject at build/deploy time):
+
+```html
+<script>
+  window.TABLEAU_ADSENSE_CLIENT_ID = "ca-pub-xxxxxxxxxxxxxxxx";
+</script>
+```
