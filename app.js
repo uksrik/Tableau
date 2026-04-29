@@ -13,6 +13,7 @@ const state = {
   signatureDataUrl: null,
   selectedAnnoId: null,
   annotationsByPage: new Map(),
+  adsEnabled: false,
 };
 
 const els = {
@@ -33,6 +34,12 @@ const els = {
   pdfCanvas: document.getElementById('pdfCanvas'),
   overlayCanvas: document.getElementById('overlayCanvas'),
   signaturePad: document.getElementById('signaturePad'),
+  consentBanner: document.getElementById('consentBanner'),
+  allowAdsBtn: document.getElementById('allowAdsBtn'),
+  denyAdsBtn: document.getElementById('denyAdsBtn'),
+  topAdContainer: document.getElementById('topAdContainer'),
+  inlineAdContainer: document.getElementById('inlineAdContainer'),
+  bottomAdContainer: document.getElementById('bottomAdContainer'),
 };
 
 const pdfCtx = els.pdfCanvas.getContext('2d');
@@ -40,6 +47,7 @@ const overlayCtx = els.overlayCanvas.getContext('2d');
 const signCtx = els.signaturePad.getContext('2d');
 
 setupSignaturePad();
+initAdControls();
 bindEvents();
 refreshControls();
 
@@ -57,10 +65,64 @@ function bindEvents() {
   els.clearSignatureBtn.addEventListener('click', clearSignaturePad);
   els.saveSignatureBtn.addEventListener('click', saveSignatureFromPad);
   els.downloadBtn.addEventListener('click', exportPdf);
+  els.allowAdsBtn.addEventListener('click', () => setAdConsent(true));
+  els.denyAdsBtn.addEventListener('click', () => setAdConsent(false));
 
   els.overlayCanvas.addEventListener('pointerdown', onOverlayPointerDown);
   els.overlayCanvas.addEventListener('pointermove', onOverlayPointerMove);
   window.addEventListener('pointerup', onOverlayPointerUp);
+}
+
+function initAdControls() {
+  const storedConsent = localStorage.getItem('tableau_ad_consent');
+  if (storedConsent === 'granted') {
+    state.adsEnabled = true;
+    loadAdProvider();
+  } else if (storedConsent === 'denied') {
+    state.adsEnabled = false;
+  } else {
+    els.consentBanner.classList.remove('hidden');
+  }
+  paintAdPlaceholders();
+}
+
+function setAdConsent(isAllowed) {
+  state.adsEnabled = isAllowed;
+  localStorage.setItem('tableau_ad_consent', isAllowed ? 'granted' : 'denied');
+  els.consentBanner.classList.add('hidden');
+  if (isAllowed) {
+    loadAdProvider();
+  } else {
+    unloadAdProvider();
+  }
+  paintAdPlaceholders();
+}
+
+function paintAdPlaceholders() {
+  const statusText = state.adsEnabled
+    ? 'Ad slot ready for live ad network fill.'
+    : 'Ads disabled. Slot reserved for contextual or direct ads.';
+  [els.topAdContainer, els.inlineAdContainer, els.bottomAdContainer].forEach((container) => {
+    if (container) container.textContent = statusText;
+  });
+}
+
+function loadAdProvider() {
+  if (document.querySelector('script[data-ad-provider=\"adsense\"]')) return;
+  const clientId = window.TABLEAU_ADSENSE_CLIENT_ID || '';
+  if (!clientId) return;
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.dataset.adProvider = 'adsense';
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(clientId)}`;
+  script.crossOrigin = 'anonymous';
+  document.head.appendChild(script);
+}
+
+function unloadAdProvider() {
+  const existing = document.querySelector('script[data-ad-provider=\"adsense\"]');
+  if (existing) existing.remove();
 }
 
 async function onPdfSelected(event) {

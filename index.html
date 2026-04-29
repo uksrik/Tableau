@@ -4,13 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tableau PDF Editor + Signature Studio</title>
+  <meta name="description" content="Browser-based PDF editor and signature tool with optional ad slots for hosted deployments." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="consentBanner" class="consent-banner hidden" role="dialog" aria-live="polite" aria-label="Ad consent banner">
+    <p>
+      This site can show advertising to keep the PDF editor free. Allow ad personalization?
+    </p>
+    <div class="button-row">
+      <button id="allowAdsBtn" class="secondary-btn">Allow Ads</button>
+      <button id="denyAdsBtn" class="secondary-btn">Decline</button>
+    </div>
+  </div>
+
   <header class="app-header">
     <h1>Full-Scale PDF Editor & Signature App</h1>
     <p>Upload a PDF, annotate pages, draw signatures, and export your edited document.</p>
   </header>
+
+  <aside class="ad-slot ad-slot-top" data-ad-slot="top-banner" aria-label="Advertisement">
+    <div class="ad-label">Advertisement</div>
+    <div id="topAdContainer" class="ad-container">
+      <p>Top ad slot (reserved)</p>
+    </div>
+  </aside>
 
   <main class="layout">
     <section class="panel controls">
@@ -74,6 +92,13 @@
         <canvas id="pdfCanvas"></canvas>
         <canvas id="overlayCanvas"></canvas>
       </div>
+
+      <aside class="ad-slot ad-slot-inline" data-ad-slot="inline-rectangle" aria-label="Advertisement">
+        <div class="ad-label">Advertisement</div>
+        <div id="inlineAdContainer" class="ad-container">
+          <p>Inline ad slot (reserved)</p>
+        </div>
+      </aside>
     </section>
   </main>
 
@@ -83,7 +108,18 @@
     </small>
   </footer>
 
+  <aside class="ad-slot ad-slot-bottom" data-ad-slot="sticky-footer" aria-label="Advertisement">
+    <div class="ad-label">Advertisement</div>
+    <div id="bottomAdContainer" class="ad-container">
+      <p>Bottom ad slot (reserved)</p>
+    </div>
+  </aside>
+
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script>
+    // Set this at deploy time (e.g. window.TABLEAU_ADSENSE_CLIENT_ID = "ca-pub-xxxx")
+    window.TABLEAU_ADSENSE_CLIENT_ID = window.TABLEAU_ADSENSE_CLIENT_ID || "";
+  </script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
