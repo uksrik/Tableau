@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tableau PDF Editor + Signature Studio</title>
+  <meta name="description" content="Browser-based PDF editor and signature tool with optional ad slots for hosted deployments." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="consentBanner" class="consent-banner hidden" role="dialog" aria-live="polite" aria-label="Ad consent banner">
+    <p>
+      This site can show advertising to keep the PDF editor free. Allow ad personalization?
+    </p>
+    <div class="button-row">
+      <button id="allowAdsBtn" class="secondary-btn">Allow Ads</button>
+      <button id="denyAdsBtn" class="secondary-btn">Decline</button>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <h1>Full-Scale PDF Editor & Signature App</h1>
+    <p>Upload a PDF, annotate pages, draw signatures, and export your edited document.</p>
+  </header>
+
+  <aside class="ad-slot ad-slot-top" data-ad-slot="top-banner" aria-label="Advertisement">
+    <div class="ad-label">Advertisement</div>
+    <div id="topAdContainer" class="ad-container">
+      <p>Top ad slot (reserved)</p>
+    </div>
+  </aside>
+
+  <main class="layout">
+    <section class="panel controls">
+      <h2>Document</h2>
+      <label class="input-group">
+        <span>Load PDF</span>
+        <input id="pdfInput" type="file" accept="application/pdf" />
+      </label>
+
+      <div class="button-row">
+        <button id="prevPageBtn" disabled>◀ Prev</button>
+        <button id="nextPageBtn" disabled>Next ▶</button>
+      </div>
+      <p id="pageInfo">Page 0 / 0</p>
+
+      <h2>Annotation Tools</h2>
+      <label class="input-group">
+        <span>Tool</span>
+        <select id="toolSelect">
+          <option value="select">Select / Move</option>
+          <option value="text">Text</option>
+          <option value="freehand">Freehand Draw</option>
+          <option value="signature">Signature Stamp</option>
+        </select>
+      </label>
+
+      <label class="input-group" id="textInputWrap">
+        <span>Text Content</span>
+        <input id="textInput" type="text" placeholder="Type annotation text" />
+      </label>
+
+      <label class="input-group">
+        <span>Color</span>
+        <input id="colorInput" type="color" value="#1f2937" />
+      </label>
+
+      <label class="input-group">
+        <span>Size</span>
+        <input id="sizeInput" type="range" min="8" max="64" value="20" />
+      </label>
+
+      <div class="button-row">
+        <button id="undoBtn" disabled>Undo</button>
+        <button id="clearPageBtn" disabled>Clear Page</button>
+      </div>
+
+      <h2>Signature Studio</h2>
+      <p class="hint">Draw your signature below, then use <strong>Signature Stamp</strong> to place it on the PDF.</p>
+      <canvas id="signaturePad" width="360" height="160"></canvas>
+      <div class="button-row">
+        <button id="clearSignatureBtn">Clear Signature</button>
+        <button id="saveSignatureBtn">Save Signature</button>
+      </div>
+
+      <h2>Export</h2>
+      <button id="downloadBtn" disabled>Download Edited PDF</button>
+    </section>
+
+    <section class="panel workspace">
+      <div id="canvasContainer">
+        <canvas id="pdfCanvas"></canvas>
+        <canvas id="overlayCanvas"></canvas>
+      </div>
+
+      <aside class="ad-slot ad-slot-inline" data-ad-slot="inline-rectangle" aria-label="Advertisement">
+        <div class="ad-label">Advertisement</div>
+        <div id="inlineAdContainer" class="ad-container">
+          <p>Inline ad slot (reserved)</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>
+      Powered by PDF.js and PDF-Lib in-browser processing.
+    </small>
+  </footer>
+
+  <aside class="ad-slot ad-slot-bottom" data-ad-slot="sticky-footer" aria-label="Advertisement">
+    <div class="ad-label">Advertisement</div>
+    <div id="bottomAdContainer" class="ad-container">
+      <p>Bottom ad slot (reserved)</p>
+    </div>
+  </aside>
+
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script>
+    // Set this at deploy time (e.g. window.TABLEAU_ADSENSE_CLIENT_ID = "ca-pub-xxxx")
+    window.TABLEAU_ADSENSE_CLIENT_ID = window.TABLEAU_ADSENSE_CLIENT_ID || "";
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
